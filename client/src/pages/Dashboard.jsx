@@ -58,70 +58,94 @@ const Dashboard = () => {
     }
   };
 
+  const completedTasks = tasks.filter(
+    (task) => task.status === "Completed"
+  ).length;
+
+  const pendingTasks = tasks.filter(
+    (task) => task.status === "Pending"
+  ).length;
+
+  const highPriorityTasks = tasks.filter(
+    (task) => task.priority === "High"
+  ).length;
+
   return (
     <div className="min-h-screen bg-slate-950">
       <Navbar />
 
-      <main className="mx-auto max-w-6xl px-8 py-10">
-        <h2 className="text-3xl font-bold text-white">
-          Dashboard
-        </h2>
+    <main className="mx-auto max-w-7xl px-8 py-10">
+    <h1 className="text-4xl font-bold text-white">
+      Dashboard
+    </h1>
 
-        <p className="mt-2 text-slate-400">
-          Welcome to TaskFlow
-        </p>
+    <p className="mt-2 text-slate-400">
+      Welcome to TaskFlow
+    </p>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <StatsCard
-            title="Total Tasks"
-            value={tasks.length}
-          />
+    {/* Stats */}
+    <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <StatsCard
+        title="Total Tasks"
+        value={tasks.length}
+      />
 
-          <StatsCard
-            title="Completed"
-            value={0}
-          />
+      <StatsCard
+        title="Completed"
+        value={completedTasks}
+      />
 
-          <StatsCard
-            title="Pending"
-            value={0}
-          />
+      <StatsCard
+        title="Pending"
+        value={pendingTasks}
+      />
 
-          <StatsCard
-            title="High Priority"
-            value={0}
-          />
-          {editingTask && (
-            <TaskForm
-              initialData={editingTask}
-              onSubmit={handleTaskUpdated}
-              buttonText="Save Changes"
+      <StatsCard
+        title="High Priority"
+        value={highPriorityTasks}
+      />
+    </div>
+
+    {/* Edit Form */}
+    {editingTask && (
+      <div className="mt-10">
+        <TaskForm
+          initialData={editingTask}
+          onSubmit={handleTaskUpdated}
+          buttonText="Save Changes"
+        />
+      </div>
+    )}
+
+    {/* Add Task */}
+    <div className="mt-10">
+      <AddTask
+        onTaskCreated={handleTaskCreated}
+      />
+    </div>
+
+    {/* Task List */}
+    <section className="mt-12">
+      <h2 className="mb-6 text-3xl font-bold text-white">
+        My Tasks
+      </h2>
+
+      {tasks.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {tasks.map((task) => (
+            <TaskCard
+              key={task._id}
+              task={task}
+              onDelete={handleTaskDeleted}
+              onEdit={setEditingTask}
             />
-          )}
-          <AddTask onTaskCreated={handleTaskCreated} />
-
-          <section className="mt-12">
-            <h2 className="mb-6 text-2xl font-bold text-white">
-              My Tasks
-            </h2>
-
-            {tasks.length === 0 ? (
-              <EmptyState />
-            ) : (
-              <div className="grid gap-5 md:grid-cols-2">
-                {tasks.map((task) => (
-                  <TaskCard
-                    key={task._id}
-                    task={task}
-                    onDelete={handleTaskDeleted}
-                    onEdit={setEditingTask}
-                />
-                ))}
-              </div>
-            )}
-          </section>
+          ))}
         </div>
-      </main>
+      )}
+    </section>
+    </main>
     </div>
   );
 };
